@@ -1,0 +1,8 @@
+::sysinit:/etc/init.d/rcS
+#::respawn:/bin/login
+::ctrlaltdel:/bin/umount -a -r
+#::once:/sbin/in.inetd -R 1000
+#::once:/sbin/syslogd
+#::respawn:-/bin/ash
+ttyAL0::respawn:/bin/sh
+#::respawn:/sbin/agetty 9600 tts/1 vt102
