@@ -7,7 +7,8 @@
 # Set V=1 when calling make to enable verbose output
 # mainly for debugging purposes.
 
-CROSS_COMPILE=/opt/nios_gcc/bin/nios2-linux-gnu-
+CROSS_COMPILE="/opt/nios_gcc/bin/nios2-linux-gnu-"
+ARCH=nios2
 
 ifeq ($(V), 1)
 Q=
@@ -26,8 +27,8 @@ build:
 	$(Q) echo
 
 	$(Q) rm -f ./busybox/.config
-	$(Q) sed -r "s#CONFIG_CROSS_COMPILER_PREFIX=#CONFIG_CROSS_COMPILER_PREFIX=${CROSS_COMPILE}#" <./busybox/config_nios> ./busybox/.config
-	$(Q) make -C ./busybox
+	$(Q) sed -r "s#CONFIG_CROSS_COMPILER_PREFIX=#CONFIG_CROSS_COMPILER_PREFIX=\"${CROSS_COMPILE}\"#" <./busybox/config_nios> ./busybox/.config
+	$(Q) make -C ./busybox ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE}
 	$(Q) make -C ./busybox install
 
 	$(Q) echo
