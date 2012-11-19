@@ -55,6 +55,3 @@ do
                 $i start
         fi
 done
-
-echo "Copyright (c) 2008 by Odyssée Systemes"
-
