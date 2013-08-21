@@ -7,8 +7,8 @@
 # Set V=1 when calling make to enable verbose output
 # mainly for debugging purposes.
 
-CROSS_COMPILE="/opt/nios_gcc/bin/nios2-linux-gnu-"
-ARCH=nios2
+#CROSS_COMPILE="/opt/nios_gcc/bin/nios2-linux-gnu-"
+#ARCH=nios2
 
 ifeq ($(V), 1)
 Q=
@@ -31,6 +31,8 @@ build:
 	$(Q) make -C ./busybox ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE}
 	$(Q) make -C ./busybox install
 
+	$(Q) cp -Rfa _busybox/* _install/
+
 	$(Q) echo
 	$(Q) echo -e "\033[32m ***** Creating rootfs *****\033[0m"
 	$(Q) echo
@@ -42,7 +44,9 @@ build:
 	$(Q) mkdir -p _install/var
 	$(Q) mkdir -p _install/proc
 	$(Q) mkdir -p _install/usr
-
+	$(Q) mkdir -p _install/bin
+	$(Q) mkdir -p _install/etc/init.d
+	$(Q) mkdir -p _install/etc/rc.d
 	$(Q) mkdir -p _install/tmp
 	$(Q) chmod -f 776 _install/tmp
 	$(Q) chmod -f o+t _install/tmp
@@ -61,14 +65,15 @@ build:
 	$(Q) sudo mknod -m 600 _install/dev/ram b 1 1
 
 # Busybox sticky bit
-	$(Q) chmod -f u+s _install/bin/busybox
+	$(Q) sudo chmod -f u+s _install/bin/busybox
 
-#cp -Rfa _fs/etc/* _install/etc/
 	$(Q) mkdir -p _install/etc/init.d
 	$(Q) mkdir -p _install/etc/rc.d
 
 #cp -Rfa _fs/etc/inittab _install/etc/inittab
 	$(Q) cp -Rfa _fs/etc/* _install/etc/
+	$(Q) cp -Rfa _fs/bin/* _install/bin/
+	$(Q) cp -Rfa _fs/lib/* _install/lib/
 
 # Ajout du script /init
 	$(Q) ln -s bin/busybox _install/init
@@ -85,8 +90,8 @@ install:
 	$(Q) echo
 clean:
 	$(Q) sudo rm -Rf _install/*
-	$(Q) cp -Rfa _busybox/* _install/
+	$(Q) sudo rm -Rf _busybox/*
 	$(Q) rm -f /tmp/initramfs.cpio
 
 distclean: clean
-	$(Q) $(Q) make -C ./busybox clean
+	$(Q) make -C ./busybox clean
